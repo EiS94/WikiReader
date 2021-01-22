@@ -1,18 +1,19 @@
-package com.example.wikireader;
+package com.schaubeck.wikireader;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.chaquo.python.PyObject;
 import com.chaquo.python.Python;
 import com.chaquo.python.android.AndroidPlatform;
+import com.schaubeck.wikireader.wikipedia.Article;
 
 import java.util.Locale;
 
@@ -24,6 +25,8 @@ public class MainActivity extends AppCompatActivity {
     EditText input;
     TextView result;
 
+    Article article;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +37,8 @@ public class MainActivity extends AppCompatActivity {
         stop = findViewById(R.id.btnStop);
         result = findViewById(R.id.textResult);
         input = findViewById(R.id.textInput);
+
+        result.setMovementMethod(new ScrollingMovementMethod());
 
 
         textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
@@ -56,18 +61,22 @@ public class MainActivity extends AppCompatActivity {
                 PyObject pyobj = py.getModule("main");
                 PyObject obj = null;
 
-                obj = pyobj.callAttr("wiki", input.getText().toString());
+                //obj = pyobj.callAttr("getArticleBySections", "Star Wars", "de");
+                obj = pyobj.callAttr("getArticleBySections", input.getText().toString(), "de");
+
+                article = Article.parseFromPythonResult(input.getText().toString(), obj.toString());
 
                 pythonResult = obj.toString();
 
-                result.setText(pythonResult);
+                result.setText(article.getRepresentation());
             }
         });
 
         play.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int speech = textToSpeech.speak(pythonResult, TextToSpeech.QUEUE_FLUSH, null);
+                textToSpeech.speak(article.getSections().get(0).getRepresentation(), TextToSpeech.QUEUE_FLUSH, null);
+                textToSpeech.speak(article.getSections().get(1).getRepresentation(), TextToSpeech.QUEUE_FLUSH, null);
             }
         });
 

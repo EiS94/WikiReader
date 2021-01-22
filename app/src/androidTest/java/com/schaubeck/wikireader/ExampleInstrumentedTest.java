@@ -1,4 +1,4 @@
-package com.example.wikireader;
+package com.schaubeck.wikireader;
 
 import android.content.Context;
 
