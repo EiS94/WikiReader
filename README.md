@@ -13,3 +13,4 @@ Find wikipedia sites and let them read out to you
 - split wiki-sites in chapters
 - select chapters to be read out
 - UI improvements
+- replace some text passages to be more smooth by reading out (e.g. "* 10.02.1992" with "born on the 10th February in 1992")
