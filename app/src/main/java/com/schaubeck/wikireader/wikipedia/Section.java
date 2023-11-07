@@ -1,5 +1,7 @@
 package com.schaubeck.wikireader.wikipedia;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 public class Section {
@@ -16,7 +18,6 @@ public class Section {
 
     public Section(String title, String text) {
         this.title = title;
-        this.subsecs = subsecs;
         this.text = text;
     }
 
@@ -56,6 +57,7 @@ public class Section {
         this.text = text;
     }
 
+    @NonNull
     @Override
     public String toString() {
         if (subsecs != null) return "" + title + " subsecs: " + subsecs.size();
