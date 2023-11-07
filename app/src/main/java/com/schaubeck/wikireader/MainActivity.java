@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 
@@ -54,7 +56,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel("My Notification", "My Notification", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel channel = new NotificationChannel("My Notification",
+                    "My Notification", NotificationManager.IMPORTANCE_DEFAULT);
             NotificationManager manager = getSystemService(NotificationManager.class);
             manager.createNotificationChannel(channel);
         }
@@ -164,7 +167,8 @@ public class MainActivity extends AppCompatActivity {
 
                         HashMap<String, String> params = new HashMap<>();
                         params.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID, temp.toString());
-                        int res = textToSpeech.synthesizeToFile(temp.toString(), params, Environment.getDataDirectory().getAbsolutePath() + "/bla.mp3");
+                        int res = textToSpeech.synthesizeToFile(temp.toString(), params,
+                                Environment.getDataDirectory().getAbsolutePath() + "/bla.mp3");
                         if (res == TextToSpeech.SUCCESS) {
                             System.out.println("Erfolg!");
                         } else {
@@ -185,7 +189,8 @@ public class MainActivity extends AppCompatActivity {
             //PendingIntent contentIntent = PendingIntent.getActivity(MainActivity.this, 0, intent, 0);
 
             //create notification while playing
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this, "My Notification")
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this,
+                    "My Notification")
                     .setSmallIcon(R.drawable.icon)
                     .setContentTitle("WikiReader")
                     .setContentText("Audio wird abgespielt")
@@ -195,6 +200,17 @@ public class MainActivity extends AppCompatActivity {
 
 
             NotificationManagerCompat managerCompat = NotificationManagerCompat.from(MainActivity.this);
+            if (ActivityCompat.checkSelfPermission(this,
+                    android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
             managerCompat.notify(1, builder.build());
 
         });
